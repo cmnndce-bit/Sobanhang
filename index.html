@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Sổ Bán Hàng Cư Dân</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#fff7ed',
+                            100: '#ffedd5',
+                            200: '#fed7aa',
+                            500: '#f97316',
+                            600: '#ea580c',
+                        },
+                        rose: {
+                            50: '#fff1f2',
+                            100: '#ffe4e6',
+                            500: '#f43f5e',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+            background-color: #fcf8f6;
+        }
+        ::-webkit-scrollbar {
+            width: 4px;
+            height: 4px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+</head>
+<body class="text-slate-800 pb-20 md:pb-6">
+
+    <!-- APP HEADER -->
+    <header class="bg-gradient-to-r from-orange-500 to-rose-400 text-white sticky top-0 z-30 shadow-md">
+        <div class="max-w-md mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center gap-2.5">
+                <div class="bg-white/20 p-2 rounded-xl backdrop-blur-sm">
+                    <i class="fa-solid font-bold fa-store text-xl text-white"></i>
+                </div>
+                <div>
+                    <h1 class="font-bold text-lg leading-tight">Sổ Bán Hàng Cư Dân</h1>
+                    <p class="text-xs text-orange-100 font-medium">Săn Sale & Quản Lý Siêu Tốc</p>
+                </div>
+            </div>
+            <button onclick="openModal('modalSettings')" class="p-2.5 bg-white/10 hover:bg-white/20 rounded-xl transition text-white" title="Cài đặt & Sao lưu">
+                <i class="fa-solid fa-gear text-lg"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- MAIN CONTAINER -->
+    <main class="max-w-md mx-auto px-3 pt-3">
+
+        <!-- TAB 1: BÁN HÀNG (POS) -->
+        <section id="tab-pos" class="tab-content space-y-3">
+            <!-- Quick Stats Banner -->
+            <div class="grid grid-cols-3 gap-2">
+                <div class="bg-white p-2.5 rounded-2xl shadow-sm border border-orange-100">
+                    <p class="text-[11px] text-slate-500 font-medium">Doanh Thu</p>
+                    <p class="text-sm font-bold text-slate-800 mt-0.5" id="stat-revenue">0đ</p>
+                </div>
+                <div class="bg-white p-2.5 rounded-2xl shadow-sm border border-emerald-100">
+                    <p class="text-[11px] text-emerald-600 font-medium">Lãi Thực Tế</p>
+                    <p class="text-sm font-bold text-emerald-600 mt-0.5" id="stat-profit">0đ</p>
+                </div>
+                <div class="bg-white p-2.5 rounded-2xl shadow-sm border border-rose-100">
+                    <p class="text-[11px] text-rose-500 font-medium">Tổng Nợ</p>
+                    <p class="text-sm font-bold text-rose-600 mt-0.5" id="stat-debt">0đ</p>
+                </div>
+            </div>
+
+            <!-- Cart Section -->
+            <div class="bg-white rounded-2xl p-3.5 shadow-sm border border-orange-100/60 space-y-3">
+                <div class="flex justify-between items-center border-b border-slate-100 pb-2">
+                    <h2 class="font-bold text-slate-800 flex items-center gap-1.5">
+                        <i class="fa-solid fa-cart-shopping text-orange-500"></i> Đơn Hàng Mới
+                    </h2>
+                    <button onclick="clearCart()" class="text-xs text-rose-500 hover:text-rose-600 font-medium px-2 py-1 bg-rose-50 rounded-lg">
+                        <i class="fa-solid fa-trash-can"></i> Xóa giỏ
+                    </button>
+                </div>
+
+                <!-- Selected Customer -->
+                <div class="flex gap-2 items-center">
+                    <div class="relative flex-1">
+                        <select id="cartCustomerSelect" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm font-medium focus:ring-2 focus:ring-orange-400 focus:outline-none appearance-none pr-8">
+                        </select>
+                        <i class="fa-solid fa-chevron-down absolute right-3 top-3 text-slate-400 text-xs pointer-events-none"></i>
+                    </div>
+                    <button onclick="openModal('modalCustomer')" class="bg-orange-100 text-orange-600 hover:bg-orange-200 p-2 rounded-xl text-sm font-semibold transition flex items-center gap-1">
+                        <i class="fa-solid fa-plus"></i> Cư Dân
+                    </button>
+                </div>
+
+                <!-- Cart Items List -->
+                <div id="cartList" class="space-y-2 max-h-48 overflow-y-auto pr-1">
+                    <p class="text-xs text-center text-slate-400 py-4">Chưa có sản phẩm nào trong giỏ hàng</p>
+                </div>
+
+                <!-- Total & Action -->
+                <div class="pt-2 border-t border-slate-100 space-y-2">
+                    <div class="flex justify-between items-center text-base font-bold">
+                        <span>Tổng tiền:</span>
+                        <span class="text-orange-600 text-lg" id="cartTotal">0đ</span>
+                    </div>
+
+                    <!-- Payment Mode Selection -->
+                    <div class="grid grid-cols-2 gap-2">
+                        <label class="flex items-center justify-center gap-1.5 p-2 rounded-xl border border-emerald-200 bg-emerald-50/50 cursor-pointer text-xs font-semibold text-emerald-700 has-[:checked]:bg-emerald-500 has-[:checked]:text-white transition">
+                            <input type="radio" name="paymentType" value="PAID" checked class="hidden">
+                            <i class="fa-solid fa-circle-check"></i> Thanh toán đủ
+                        </label>
+                        <label class="flex items-center justify-center gap-1.5 p-2 rounded-xl border border-rose-200 bg-rose-50/50 cursor-pointer text-xs font-semibold text-rose-700 has-[:checked]:bg-rose-500 has-[:checked]:text-white transition">
+                            <input type="radio" name="paymentType" value="DEBT" class="hidden">
+                            <i class="fa-solid fa-clock-rotate-left"></i> Ghi nợ / Thiếu
+                        </label>
+                    </div>
+
+                    <button onclick="checkout()" class="w-full bg-gradient-to-r from-orange-500 to-rose-500 hover:from-orange-600 hover:to-rose-600 text-white font-bold py-3 rounded-xl shadow-lg
